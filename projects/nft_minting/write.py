@@ -1,73 +1,50 @@
-from algokit_utils.beta.algorand_client import (
-    AlgorandClient,
-    PayParams
-)
-
-
-import os
-import algokit_utils 
-
-import json
 import hashlib
-from algokit_utils.beta.account_manager import AddressAndSigner
+import json
+import os
+
+import algokit_utils
+from algokit_utils.beta.algorand_client import AlgorandClient, PayParams
+from algosdk.atomic_transaction_composer import TransactionWithSigner
+from dotenv import load_dotenv
 
 from smart_contracts.artifacts.nft_minting.nft_minting_client import NftMintingClient
-
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-
-
-
 
 # JSON file
 dir_path = os.path.dirname(os.path.realpath(__file__))
 f = open (dir_path + '/metadata.json', "r")
 
 # Reading from file
-metadataJSON = json.loads(f.read())
-metadataStr = json.dumps(metadataJSON)
-print(metadataStr)
+metadata_JSON = json.loads(f.read())
+metadata_str = json.dumps(metadata_JSON)
+print(metadata_str)
 
 #Creating the metadata_hash
-hash = hashlib.new("sha512_256")
-hash.update(b"arc0003/amj")
-hash.update(metadataStr.encode("utf-8"))
-json_metadata_hash = hash.digest()
+hash_file = hashlib.new("sha512_256")
+hash_file.update(b"arc0003/amj")
+hash_file.update(metadata_str.encode("utf-8"))
+json_metadata_hash = hash_file.digest()
 
-algorand = AlgorandClient.default_local_net()
 
-# import dispenser from KMD
-dispenser = algorand.account.dispenser()
-print(dispenser.address)
+load_dotenv()
+PASSPHRASE = os.environ.get("PASSPHRASE")
 
-#Create a wallet for the creator of the token
-creator = algorand.account.random()
-print(creator.address)
+print("Processing account...")
 
-#Get account info about creator
-print(algorand.account.get_information(creator.address))
-
-#Send Algos
-algorand.send.payment(
-    PayParams(
-        sender=dispenser.address,
-        receiver=creator.address,
-        amount=10_000_000
-    )
-)
+algorand = AlgorandClient.test_net()
+creator = algokit_utils.get_account_from_mnemonic(PASSPHRASE)
 
 app_client = NftMintingClient(
     algod_client = algorand.client.algod,
     sender = creator.address,
     signer= creator.signer,
+    app_id = 717063900
 )
 
-result = app_client.create_bare()
-
-print(f"Called set on {app_client.app_address}")
 
 buyer_txn = algorand.transactions.payment(
         PayParams(
             sender= creator.address,
+            signer= creator.signer,
             receiver= app_client.app_address,
             amount= 200_000,
         )
@@ -80,7 +57,7 @@ response = app_client.mint_nft(
     unit_name="hall",
     asset_name="hally demo",
     metadata_hash=json_metadata_hash,
-    url="https://gateway.pinata.cloud/ipfs/QmTURg66KbuZqFgajPhLnRaaMnpCVZcmhR1xgc3xaGGzUL",
+    url="https://gateway.pinata.cloud/ipfs/QmWKnX5aA8PhWhDRDTmkuVNqcGYromfBBSyvqSYYMByJzS",
     buyer_txn=TransactionWithSigner(txn=buyer_txn, signer= creator.signer),
     transaction_parameters=algokit_utils.TransactionParameters(
             sender=creator.address,

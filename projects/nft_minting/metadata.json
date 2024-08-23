@@ -1,14 +1,21 @@
 {
     "name":"Hally",
-    "description":"Hally the pitbull",
+    "standard":"arc3",
     "image":"https://gateway.pinata.cloud/ipfs/QmZimoKYoRwBcWtRYsoRJPRk8aDwZp2j4zUihh2eczpdRp",
-    "decimals":0,
-    "unitName":"HALL",
-    "image_integrity":"sha256-QmZimoKYoRwBcWtRYsoRJPRk8aDwZp2j4zUihh2eczpdRp",
-    "image_mimetype":"image/jpg",
+    "image_mime_type":"image/jpeg",
+    "description":"Hally the pitbull v2",
     "properties":
         {
-            "beauty":100,
-            "love":10
+          "traits":
+            {
+                "beauty":100,
+                "love":10
+            },
+                "filters":{}
+        },
+    "extra":
+        {
+            "royalty":"5%",
+            "token":"1234"
         }
 }
