@@ -1,0 +1,5 @@
+#pragma version 10
+
+smart_contracts.nft_minting.contract.NftMinting.clear_state_program:
+    int 1
+    return

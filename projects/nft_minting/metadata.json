@@ -1,0 +1,14 @@
+{
+    "name":"Hally",
+    "description":"Hally the pitbull",
+    "image":"https://gateway.pinata.cloud/ipfs/QmZimoKYoRwBcWtRYsoRJPRk8aDwZp2j4zUihh2eczpdRp",
+    "decimals":0,
+    "unitName":"HALL",
+    "image_integrity":"sha256-QmZimoKYoRwBcWtRYsoRJPRk8aDwZp2j4zUihh2eczpdRp",
+    "image_mimetype":"image/jpg",
+    "properties":
+        {
+            "beauty":100,
+            "love":10
+        }
+}

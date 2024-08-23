@@ -1,0 +1,98 @@
+#pragma version 10
+
+smart_contracts.nft_minting.contract.NftMinting.approval_program:
+    txn NumAppArgs
+    bz main_bare_routing@6
+    method "mint_nft(string,string,string,byte[],pay)void"
+    method "get_asset_id()uint64"
+    txna ApplicationArgs 0
+    match main_mint_nft_route@2 main_get_asset_id_route@3
+    err // reject transaction
+
+main_mint_nft_route@2:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    extract 2 0
+    txna ApplicationArgs 3
+    extract 2 0
+    txna ApplicationArgs 4
+    extract 2 0
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    callsub mint_nft
+    int 1
+    return
+
+main_get_asset_id_route@3:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_asset_id
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@6:
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.nft_minting.contract.NftMinting.mint_nft(asset_name: bytes, unit_name: bytes, url: bytes, metadata_hash: bytes, buyer_txn: uint64) -> void:
+mint_nft:
+    proto 5 0
+    itxn_begin
+    frame_dig -2
+    itxn_field ConfigAssetMetadataHash
+    frame_dig -3
+    itxn_field ConfigAssetURL
+    int 0
+    itxn_field ConfigAssetDecimals
+    int 1
+    itxn_field ConfigAssetTotal
+    frame_dig -4
+    itxn_field ConfigAssetUnitName
+    frame_dig -5
+    itxn_field ConfigAssetName
+    int acfg
+    itxn_field TypeEnum
+    int 0
+    itxn_field Fee
+    itxn_submit
+    byte "asset_created"
+    itxn CreatedAssetID
+    app_global_put
+    retsub
+
+
+// smart_contracts.nft_minting.contract.NftMinting.get_asset_id() -> uint64:
+get_asset_id:
+    proto 0 1
+    int 0
+    byte "asset_created"
+    app_global_get_ex
+    assert // check self.asset_created exists
+    retsub
