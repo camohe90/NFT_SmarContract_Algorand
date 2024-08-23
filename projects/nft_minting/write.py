@@ -37,7 +37,7 @@ app_client = NftMintingClient(
     algod_client = algorand.client.algod,
     sender = creator.address,
     signer= creator.signer,
-    app_id = 717063900
+    app_id =   717073267
 )
 
 
@@ -51,7 +51,8 @@ buyer_txn = algorand.transactions.payment(
     )
 
 sp = algorand.client.algod.suggested_params()
-sp.fee = 1000
+sp.flat_fee = True
+sp.fee = 2_000
 
 response = app_client.mint_nft(
     unit_name="hall",

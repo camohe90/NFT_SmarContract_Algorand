@@ -9,9 +9,11 @@ class NftMinting(ARC4Contract):
     @abimethod()
     def mint_nft(self,
                  asset_name: String,
-                 unit_name: String, 
-                 url: String, metadata_hash: Bytes, 
-                 buyer_txn: gtxn.PaymentTransaction) -> None:
+                 unit_name: String,
+                 url: String,
+                 metadata_hash: Bytes,
+                 buyer_txn: gtxn.PaymentTransaction
+                 ) -> None:
     
         self.asset_created = itxn.AssetConfig (
             asset_name= asset_name,
